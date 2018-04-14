@@ -6,6 +6,9 @@
   "bin": {
     "ncp": "./bin/ncp"
   },
+  "scripts": {
+    "test": "mocha -R spec"
+  },
   "devDependencies": {
     "mocha": "1.15.x",
     "rimraf": "1.0.x",
@@ -14,17 +17,21 @@
   "main": "./lib/ncp.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/AvianFlu/ncp.git"
+    "url": "https://github.com/pgraham/cpdir.git"
   },
   "keywords": [
     "cli",
-    "copy"
+    "copy",
+    "cpdir"
   ],
   "license": "MIT",
   "engine": {
-    "node": ">=0.10"
+    "node": ">=6.5.0"
   },
-  "scripts": {
-    "test": "mocha -R spec"
-  }
+  "contributors": [
+    {
+      "name": "Philip Graham",
+      "url": "https://github.com/pgraham"
+    }
+  ]
 }
