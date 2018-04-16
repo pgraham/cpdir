@@ -4,7 +4,7 @@ var assert = require('assert'),
     fs = require('fs'),
     path = require('path'),
     rimraf = require('rimraf'),
-    readDirFiles = require('read-dir-files'),
+    readDirFiles = require('read-dir-files').read,
     util = require('util'),
     ncp = require('../').ncp;
 
@@ -170,7 +170,7 @@ describe('ncp', function () {
   });
 
   describe('modified files copies', function () {
-      var fixtures = path.join(__dirname, 'modified-files'),
+      var fixtures = path.join(__dirname, 'modified-files-fixtures'),
           src = path.join(fixtures, 'src'),
           out = path.join(fixtures, 'out');
 
