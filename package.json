@@ -7,12 +7,14 @@
     "ncp": "./bin/ncp"
   },
   "scripts": {
-    "test": "mocha -R spec"
+    "test": "mocha -R spec",
+    "lint": "standard"
   },
   "devDependencies": {
     "mocha": "^5.1.0",
     "read-dir-files": "0.1.1",
-    "rimraf": "^2.6.2"
+    "rimraf": "^2.6.2",
+    "standard": "*"
   },
   "main": "./lib/ncp.js",
   "repository": {
