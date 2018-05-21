@@ -1,17 +1,17 @@
+/* global describe, before, beforeEach, it */
 
-var assert = require('assert'),
-  fs = require('fs'),
-  path = require('path'),
-  rimraf = require('rimraf'),
-  readDirFiles = require('read-dir-files').read,
-  util = require('util'),
-  ncp = require('../').ncp
+var assert = require('assert')
+var fs = require('fs')
+var path = require('path')
+var rimraf = require('rimraf')
+var readDirFiles = require('read-dir-files').read
+var ncp = require('../').ncp
 
 describe('ncp', function () {
   describe('regular files and directories', function () {
-    var fixtures = path.join(__dirname, 'regular-fixtures'),
-      src = path.join(fixtures, 'src'),
-      out = path.join(fixtures, 'out')
+    var fixtures = path.join(__dirname, 'regular-fixtures')
+    var src = path.join(fixtures, 'src')
+    var out = path.join(fixtures, 'out')
 
     before(function (cb) {
       rimraf(out, function () {
@@ -34,7 +34,7 @@ describe('ncp', function () {
     describe('when copying files using filter function', function () {
       before(function (cb) {
         var filter = function (name) {
-          return name.substr(name.length - 1) != 'a'
+          return name.substr(name.length - 1) !== 'a'
         }
         rimraf(out, function () {
           ncp(src, out, {filter: filter}, cb)
@@ -47,7 +47,7 @@ describe('ncp', function () {
             for (var fileName in files) {
               var curFile = files[fileName]
               if (curFile instanceof Object) { return filter(curFile) }
-              if (fileName.substr(fileName.length - 1) == 'a') { delete files[fileName] }
+              if (fileName.substr(fileName.length - 1) === 'a') { delete files[fileName] }
             }
           }
           filter(srcFiles)
@@ -74,7 +74,7 @@ describe('ncp', function () {
             for (var fileName in files) {
               var curFile = files[fileName]
               if (curFile instanceof Object) { return filter(curFile) }
-              if (fileName.substr(fileName.length - 1) == 'a') { delete files[fileName] }
+              if (fileName.substr(fileName.length - 1) === 'a') { delete files[fileName] }
             }
           }
           filter(srcFiles)
@@ -118,7 +118,7 @@ describe('ncp', function () {
       it('output files are correctly redirected', function (cb) {
         ncp(src, out, {
           rename: function (target) {
-            if (path.basename(target) == 'a') return path.resolve(path.dirname(target), 'z')
+            if (path.basename(target) === 'a') return path.resolve(path.dirname(target), 'z')
             return target
           }
         }, function (err) {
@@ -137,9 +137,9 @@ describe('ncp', function () {
   })
 
   describe('symlink handling', function () {
-    var fixtures = path.join(__dirname, 'symlink-fixtures'),
-      src = path.join(fixtures, 'src'),
-      out = path.join(fixtures, 'out')
+    var fixtures = path.join(__dirname, 'symlink-fixtures')
+    var src = path.join(fixtures, 'src')
+    var out = path.join(fixtures, 'out')
 
     beforeEach(function (cb) {
       rimraf(out, cb)
@@ -156,6 +156,9 @@ describe('ncp', function () {
 
     it('copies file contents when dereference=true', function (cb) {
       ncp(src, out, { dereference: true }, function (err) {
+        if (err) {
+          return cb(err)
+        }
         var fileSymlinkPath = path.join(out, 'file-symlink')
         assert.ok(fs.lstatSync(fileSymlinkPath).isFile())
         assert.equal(fs.readFileSync(fileSymlinkPath), 'foo contents')
@@ -170,9 +173,9 @@ describe('ncp', function () {
   })
 
   describe('broken symlink handling', function () {
-    var fixtures = path.join(__dirname, 'broken-symlink-fixtures'),
-      src = path.join(fixtures, 'src'),
-      out = path.join(fixtures, 'out')
+    var fixtures = path.join(__dirname, 'broken-symlink-fixtures')
+    var src = path.join(fixtures, 'src')
+    var out = path.join(fixtures, 'out')
 
     beforeEach(function (cb) {
       rimraf(out, cb)
@@ -196,13 +199,17 @@ describe('ncp', function () {
   })
 
   describe('modified files copies', function () {
-    var fixtures = path.join(__dirname, 'modified-files-fixtures'),
-      src = path.join(fixtures, 'src'),
-      out = path.join(fixtures, 'out')
+    var fixtures = path.join(__dirname, 'modified-files-fixtures')
+    var src = path.join(fixtures, 'src')
+    var out = path.join(fixtures, 'out')
 
     it('if file not exists copy file to target', function (cb) {
       rimraf(out, function () {
         ncp(src, out, {modified: true, clobber: false}, function (err) {
+          if (err) {
+            return cb(err)
+          }
+
           assert.equal(fs.existsSync(out), true)
           cb()
         })
@@ -212,7 +219,14 @@ describe('ncp', function () {
     it('change source file mtime and copy', function (cb) {
       fs.utimesSync(src + '/a', new Date().getTime() / 1000, new Date('2099-01-01 00:00:00').getTime() / 1000)
       ncp(src, out, {modified: true, clobber: false}, function (err) {
+        if (err) {
+          return cb(err)
+        }
+
         fs.stat(out + '/a', function (err, stats) {
+          if (err) {
+            return cb(err)
+          }
           assert.equal(stats.mtime.getTime(), new Date('2099-01-01 00:00:00').getTime())
           cb()
         })
