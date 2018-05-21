@@ -34,7 +34,7 @@ describe('ncp', function () {
       });
     });
 
-    describe('when copying files using filter', function () {
+    describe('when copying files using filter function', function () {
       before(function (cb) {
         var filter = function(name) {
           return name.substr(name.length - 1) != 'a';
@@ -63,6 +63,39 @@ describe('ncp', function () {
           });
         });
       });
+    });
+
+    describe('when copying files using filter regex', function () {
+      before(function (cb) {
+        var filter = /[^a]$/;
+        rimraf(out, function () {
+          ncp(src, out, {filter: filter}, cb);
+        });
+      });
+
+      it('files are copied correctly', function (cb) {
+        readDirFiles(src, 'utf8', function (srcErr, srcFiles) {
+          function filter(files) {
+            for (var fileName in files) {
+              var curFile = files[fileName];
+              if (curFile instanceof Object)
+                return filter(curFile);
+              if (fileName.substr(fileName.length - 1) == 'a')
+                delete files[fileName];
+            }
+          }
+          filter(srcFiles);
+          readDirFiles(out, 'utf8', function (outErr, outFiles) {
+            assert.ifError(outErr);
+            assert.deepEqual(srcFiles, outFiles);
+            cb();
+          });
+        });
+      });
+    });
+
+    describe('when copying files using includeFiles', function () {
+
     });
 
     describe('when using clobber=false', function () {
